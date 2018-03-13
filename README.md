@@ -7,10 +7,15 @@
 #### 2. `then`方法返回一个新的`Promise`
 `Promise`的`then`方法返回一个新的`Promise`，而不是返回`this`
 ```js
+// 假设已经实现了一个Promise对象promise1
 var promise2 = promise1.then(/*your code*/)
-var promise2 !== promise1   // true
+console.log(promise2 !== promise1)  // true
 ```
 #### 3. 不同`Promise`的实现需要可以相互调用(interoperable)
 #### 4. 三个状态：`pending`,`fulfilled`(`resolved`),`rejected`
 `Promise`的初始状态为`pending`，它可以由此状态转换为`fulfilled`（`resolved`）或者`rejected`,`Promise`的状态一旦从`pending`变为`fulfilled`或者`rejected`就**永远**不会在变化.
 #### 5. 更多规范参照[Promise官方英文文档](https://promisesaplus.com/)
+
+- ### `Promise`实现
+下面我们就来一步一步实现Promise
+#### 1. `Promise`构造函数
