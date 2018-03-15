@@ -410,6 +410,44 @@ function Promise(executor) {
     self.data = undefined                   // Promise的值
     self.onResolvedCallback = []            // Promise resolve时的回调函数集，因为在Promise结束之前有可能有多个回调添加到它上面
     self.onRejectedCallback = []            // Promise reject时的回调函数集，因为在Promise结束之前有可能有多个回调添加到它上面
-
-    executor(resolve, reject)               // 执行executor并传入相应的参数
+    // resolve函数实现
+    // Promise构造函数内部定义的私有函数
+    // 作为executor回调函数的第一个参数使用
+    function resolve(value) {
+        if (value instanceof Promise) {
+            return value.then(resolve, reject)
+        }
+        // 异步执行所有回调函数
+        setTimeout(function() {
+            if(self.status === 'pending') {
+                self.status = 'resolved'
+                self.data = value
+                for(var i = 0; i < self.onResolvedCallback.length; i++) {
+                    self.onResolvedCallback[i](value)
+                }
+            }
+        }, 0)
+    }
+    // reject函数实现
+    // Promise构造函数内部定义的私有函数
+    // 作为executor回调函数的第二个参数使用
+    function reject(reason) {
+        // 异步执行所有回调函数
+        setTimeout(function() {
+            if (self.status === 'pending') {
+                self.status = 'rejected'
+                self.data = reason
+                for(var i = 0; i < self.onRejectedCallback.length; i++) {
+                    self.onRejectedCallback[i](value)
+                }
+            }
+        }, 0)
+    }
+    // executor函数在执行过程中有可能出错
+    // 我们来捕获这个错误
+    try {
+        executor(resolve, reject)               // 执行executor并传入相应的参数
+    } catch (error) {
+        reject(error)
+    }
 }
