@@ -324,4 +324,80 @@ Promise.prototype.catch = function(onRejected) {
  * 不同Promise的交互
  * 关于不同Promise间的交互，其实标准里是有[说明](https://promisesaplus.com/#point-46)的，其中详细指定了如何通过then的实参返回的值来决定promise2的状态，我们只需要按照标准把标准的内容转成代码即可。
  * 这里简单解释一下标准：
+ * 即我们要把onResolved/onRejected的返回值，x，当成一个可能是Promise的对象，也即标准里所说的thenable，
+ * 并以最保险的方式调用x上的then方法，如果大家都按照标准实现，那么不同的Promise之间就可以交互了。
+ * 而标准为了保险起见，即使x返回了一个带有then属性但并不遵循Promise标准的对象（比如说这个x把它then里的两个参数都调用了，同步或者异步调用（PS，原则上then的两个参数需要异步调用，下文会讲到），
+ * 或者是出错后又调用了它们，或者then根本不是一个函数），也能尽可能正确处理。
+ * 
+ * 关于为何需要不同的Promise实现能够相互交互，我想原因应该是显然的，Promise并不是JS一早就有的标准，
+ * 不同第三方的实现之间是并不相互知晓的，如果你使用的某一个库中封装了一个Promise实现，想象一下如果它不能跟你自己使用的Promise实现交互的场景。
+ *
+ * 建议各位对照着标准阅读以下代码，因为标准对此说明的非常详细，所以你应该能够在任意一个Promise实现中找到类似的代码：
+ * 
+ * ========================================================================================================================
+ * // resolvePromise函数即为根据x的值来决定promise2的状态的函数
+ * // 也即标准中的[Promise Resolution Procedure](https://promisesaplus.com/#point-47)
+ * // x为`promise2 = promise1.then(onResolved, onRejected)`里`onResolved/onRejected`的返回值
+ * // `resolve`和`reject`实际上是`promise2`的`executor`的两个实参，因为很难挂在其它的地方，所以一并传进来。
+ * // 相信各位一定可以对照标准把标准转换成代码，这里就只标出代码在标准中对应的位置，只在必要的地方做一些解释
+ * function resolvePromise(promise2, x, resolve, reject) {
+  var then
+  var thenCalledOrThrow = false
+
+  if (promise2 === x) { // 对应标准2.3.1节
+    return reject(new TypeError('Chaining cycle detected for promise!'))
+  }
+
+  if (x instanceof Promise) { // 对应标准2.3.2节
+    // 如果x的状态还没有确定，那么它是有可能被一个thenable决定最终状态和值的
+    // 所以这里需要做一下处理，而不能一概的以为它会被一个“正常”的值resolve
+    if (x.status === 'pending') {
+      x.then(function(value) {
+        resolvePromise(promise2, value, resolve, reject)
+      }, reject)
+    } else { // 但如果这个Promise的状态已经确定了，那么它肯定有一个“正常”的值，而不是一个thenable，所以这里直接取它的状态
+      x.then(resolve, reject)
+    }
+    return
+  }
+
+  if ((x !== null) && ((typeof x === 'object') || (typeof x === 'function'))) { // 2.3.3
+    try {
+
+      // 2.3.3.1 因为x.then有可能是一个getter，这种情况下多次读取就有可能产生副作用
+      // 即要判断它的类型，又要调用它，这就是两次读取
+      then = x.then 
+      if (typeof then === 'function') { // 2.3.3.3
+        then.call(x, function rs(y) { // 2.3.3.3.1
+          if (thenCalledOrThrow) return // 2.3.3.3.3 即这三处谁选执行就以谁的结果为准
+          thenCalledOrThrow = true
+          return resolvePromise(promise2, y, resolve, reject) // 2.3.3.3.1
+        }, function rj(r) { // 2.3.3.3.2
+          if (thenCalledOrThrow) return // 2.3.3.3.3 即这三处谁选执行就以谁的结果为准
+          thenCalledOrThrow = true
+          return reject(r)
+        })
+      } else { // 2.3.3.4
+        resolve(x)
+      }
+    } catch (e) { // 2.3.3.2
+      if (thenCalledOrThrow) return // 2.3.3.3.3 即这三处谁选执行就以谁的结果为准
+      thenCalledOrThrow = true
+      return reject(e)
+    }
+  } else { // 2.3.4
+    resolve(x)
+  }
+}
+*
+* 然后我们使用这个函数的调用替换then里几处判断x是否为Promise对象的位置即可，见下方完整代码
+* 最后，我们刚刚说到，原则上，promise.then(onResolved, onRejected)里的这两相函数需要异步调用，关于这一点，标准里也有说明：
+* In practice, this requirement ensures that onFulfilled and onRejected execute asynchronously, after the event loop turn in which then is called, and with a fresh stack.
+* 所以我们需要对我们的代码做一点变动，即在四个地方加上setTimeout(fn, 0)，这点会在完整的代码中注释，请各位自行发现。
+ * 事实上，即使你不参照标准，最终你在自测试时也会发现如果then的参数不以异步的方式调用，有些情况下Promise会不按预期的方式行为，通过不断的自测，最终你必然会让then的参数异步执行，让executor函数立即执行。本人在一开始实现Promise时就没有参照标准，而是自己凭经验测试，最终发现的这个问题。
+ * 至此，我们就实现了一个的Promise，完整代码如下：
+ */
+
+/**
+ * ====================================================================================================================================
  */
