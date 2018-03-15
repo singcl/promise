@@ -72,7 +72,7 @@ public/
 
 # lint files #
 ################
-.editorconfig
+# .editorconfig
 # .eslintrc.js
 
 # vscode #
