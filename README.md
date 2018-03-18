@@ -1,4 +1,8 @@
 ## 深入理解Promise内部结构，逐步实现一个完整的Promise类
+[![npm (scoped)](https://img.shields.io/npm/v/@singcl/promise.svg?style=flat-square)](https://www.npmjs.com/package/@singcl/promise)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-10de6e.svg?style=flat-square)](https://github.com/prettier/prettier)
+
+*badge: https://img.shields.io/*
 
 ### Promise标准简读
 #### 1. 只有一个then方法，没有race，all等方法，甚至没有构造函数
@@ -20,3 +24,5 @@ Promise的初始状态为pending，它可以由此状态转换为fulfilled（res
 
 - [x] Promise构造函数基本结构
 - [x] Promise原型方法then
+
+## License
