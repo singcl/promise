@@ -1,3 +1,4 @@
+![promise](./img/promise.png)
 ## 深入理解Promise内部结构，逐步实现一个完整的Promise类
 [![npm (scoped)](https://img.shields.io/npm/v/@singcl/promise.svg?style=flat-square)](https://www.npmjs.com/package/@singcl/promise)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-10de6e.svg?style=flat-square)](https://github.com/prettier/prettier)
