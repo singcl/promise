@@ -1,6 +1,7 @@
 ## 深入理解Promise内部结构，逐步实现一个完整的Promise类
 [![npm (scoped)](https://img.shields.io/npm/v/@singcl/promise.svg?style=flat-square)](https://www.npmjs.com/package/@singcl/promise)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-10de6e.svg?style=flat-square)](https://github.com/prettier/prettier)
+![Github file size](https://img.shields.io/github/size/singcl/promise/index.js.svg?style=flat-square)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsingcl%2Fpromise.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsingcl%2Fpromise?ref=badge_shield)
 
 *badge: https://img.shields.io/*
