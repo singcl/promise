@@ -16,7 +16,7 @@ console.log(promise2 === promise1)  // fales
 Promise的初始状态为pending，它可以由此状态转换为fulfilled（resolved）或者rejected,Promise的状态一旦从pending变为fulfilled或者rejected就**永远**不会在变化.
 #### 5. 更多规范参照[Promise官方英文文档](https://promisesaplus.com/)
 
-- ### **Promise实现**
+### **Promise实现**
 
 - [x] Promise构造函数基本结构
 - [x] Promise原型方法then
