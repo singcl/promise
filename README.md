@@ -7,6 +7,25 @@
 
 *badge: https://img.shields.io/*
 
+### USAGE
+
+1. install: `npm i @singcl/promise`
+2. In project:
+```js
+var Promise = require('@singcl/promise')
+
+var promise = new Promise(function(resolve, reject) {
+	resolve('This is an example')
+})
+
+promise.then(function(v) {
+	console.log(v)
+})
+
+// This is an example
+```
+
+
 ### Promise标准简读
 #### 1. 只有一个then方法，没有race，all等方法，甚至没有构造函数
 Promise标准中仅指定了Promise对象的then方法的行为，其它一切我们常见的方法/函数都并没有指定，包括catch，race，all等常用方法，甚至也没有指定该如何构造出一个Promise对象。另外then也没有一般实现中（Q, $q等）所支持的第三个参数，一般称onProgress.
