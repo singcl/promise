@@ -142,6 +142,8 @@ function Promise(executor) {
                     reject(x)
                 })
             })
+            // then方法执行结果返回一个新的promise: promise2
+            return promise2
         }
     }
     /*============================ Promise 原型方法then END =====================================*/
