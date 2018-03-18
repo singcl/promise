@@ -1,6 +1,7 @@
 ## 深入理解Promise内部结构，逐步实现一个完整的Promise类
 [![npm (scoped)](https://img.shields.io/npm/v/@singcl/promise.svg?style=flat-square)](https://www.npmjs.com/package/@singcl/promise)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-10de6e.svg?style=flat-square)](https://github.com/prettier/prettier)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsingcl%2Fpromise.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsingcl%2Fpromise?ref=badge_shield)
 
 *badge: https://img.shields.io/*
 
@@ -26,3 +27,6 @@ Promise的初始状态为pending，它可以由此状态转换为fulfilled（res
 - [x] Promise原型方法then
 
 ## License
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsingcl%2Fpromise.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsingcl%2Fpromise?ref=badge_large)
