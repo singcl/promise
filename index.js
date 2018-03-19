@@ -134,7 +134,7 @@ function Promise(executor) {
             promise2 = new Promise(function(resolve, reject) {
                 // 这里之所以没有异步执行，是因为这些函数必然会被resolve或reject调用，而resolve或reject函数里的内容已是异步执行，构造函数里的定义
                 self.onResolvedCallback.push(function(value) {
-                    var x = onResolved(self.data)
+                    var x = onResolved(value)
                     if (x instanceof Promise) {
                         x.then(resolve, reject)
                     }
@@ -142,7 +142,7 @@ function Promise(executor) {
                 })
 
                 self.onRejectedCallback.push(function(reason) {
-                    var x = onRejected(self.data)
+                    var x = onRejected(reason)
                     if (x instanceof Promise) {
                         x.then(resolve, reject)
                     }
