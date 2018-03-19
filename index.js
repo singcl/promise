@@ -23,7 +23,7 @@ function Promise(executor) {
     self.onResolvedCallback = []            // Promise resolve时的回调函数集，因为在Promise结束之前有可能有多个回调添加到它上面
     self.onRejectedCallback = []            // Promise reject时的回调函数集，因为在Promise结束之前有可能有多个回调添加到它上面
 
-    /*=================================== Promise 构造函数 ============================================*/
+    /* =================================== Promise 构造函数 ============================================ */
     // resolve函数实现
     // Promise构造函数内部定义的私有函数
     // 作为executor回调函数的第一个参数使用
@@ -64,9 +64,9 @@ function Promise(executor) {
     // } catch (error) {
     //     reject(error)
     // }
-    /*=============================== Promise 构造函数 END ========================================*/
+    /* =============================== Promise 构造函数 END ======================================== */
 
-    /*=============================== Promise 原型方法: then ======================================*/
+    /* =============================== Promise 原型方法: then ====================================== */
     // Promise对象有一个then方法，用来注册在这个Promise状态确定后的回调.
     // 显然，then方法定义在Promise的原型对象上。then方法会返回一个Promise.
     Promise.prototype.then = function(onResolved, onRejected) {
@@ -146,7 +146,7 @@ function Promise(executor) {
             return promise2
         }
     }
-    /*============================ Promise 原型方法then END =====================================*/
+    /* ============================ Promise 原型方法then END ===================================== */
 }
 
 // exports
