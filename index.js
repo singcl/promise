@@ -32,7 +32,7 @@ function Promise(executor) {
             return value.then(resolve, reject)
         }
         // 异步执行所有回调函数
-        // setTimeout(function() {
+        setTimeout(function() {
             if(self.status === 'pending') {
                 self.status = 'resolved'
                 self.data = value
@@ -40,22 +40,22 @@ function Promise(executor) {
                     self.onResolvedCallback[i](value)
                 }
             }
-        // }, 0)
+        }, 0)
     }
     // reject函数实现
     // Promise构造函数内部定义的私有函数
     // 作为executor回调函数的第二个参数使用
     function reject(reason) {
         // 异步执行所有回调函数
-        // setTimeout(function() {
+        setTimeout(function() {
             if (self.status === 'pending') {
                 self.status = 'rejected'
                 self.data = reason
                 for(var i = 0; i < self.onRejectedCallback.length; i++) {
-                    self.onRejectedCallback[i](value)
+                    self.onRejectedCallback[i](reason)
                 }
             }
-        // }, 0)
+        }, 0)
     }
     // executor函数在执行过程中有可能出错
     // 我们来捕获这个错误
@@ -79,20 +79,23 @@ function Promise(executor) {
 
         if (self.status === 'resolved') {
             // 如果promise1(此处即为this/self)的状态已经确定并且是resolved，我们调用onResolved
-            // 因为考虑到有可能throw，所以我们将其包在try/catch块里
             promise2 = new Promise(function(resolve, reject) {
-                try {
-                    var x = onResolved(self.data)
-                    // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
+                // 异步执行onResolved
+                setTimeout(function() {
+                    // 因为考虑到有可能throw，所以我们将其包在try/catch块里
+                    try {
+                        var x = onResolved(self.data)
+                        // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
+                        if (x instanceof Promise) {
+                            x.then(resolve, reject)
+                        }
+                        // 否则，以它的返回值做为promise2的结果
+                        resolve(x)
+                    } catch (error) {
+                        // 如果出错，以捕获到的错误做为promise2的结果
+                        reject(error)
                     }
-                    // 否则，以它的返回值做为promise2的结果
-                    resolve(x)
-                } catch (error) {
-                    // 如果出错，以捕获到的错误做为promise2的结果
-                    reject(error)
-                }
+                }, 0)
             })
             // then方法执行结果返回一个新的promise: promise2
             return promise2
@@ -101,20 +104,23 @@ function Promise(executor) {
         // 此处与前一个if块的逻辑几乎相同，区别在于所调用的是onRejected函数
         if (self.status === 'rejected') {
             // 如果promise1(此处即为this/self)的状态已经确定并且是rejected，我们调用onRejected
-            // 因为考虑到有可能throw，所以我们将其包在try/catch块里
             promise2 = new Promise(function(resolve, reject) {
-                try {
-                    var x = onRejected(self.data)
-                    // 如果onRejected的返回值是一个Promise对象，直接取它的结果做为promise2的结果
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
+                // 异步执行onRejected
+                setTimeout(function() {
+                    // 因为考虑到有可能throw，所以我们将其包在try/catch块里
+                    try {
+                        var x = onRejected(self.data)
+                        // 如果onRejected的返回值是一个Promise对象，直接取它的结果做为promise2的结果
+                        if (x instanceof Promise) {
+                            x.then(resolve, reject)
+                        }
+                        // 否则，以它的返回值做为promise2的结果
+                        reject(x)
+                    } catch (error) {
+                        // 如果出错，以捕获到的错误做为promise2的结果
+                        reject(error)
                     }
-                    // 否则，以它的返回值做为promise2的结果
-                    reject(x)
-                } catch (error) {
-                    // 如果出错，以捕获到的错误做为promise2的结果
-                    reject(error)
-                }
+                }, 0)
             })
             // then方法执行结果返回一个新的promise: promise2
             return promise2
@@ -125,7 +131,8 @@ function Promise(executor) {
             // 只能等到Promise的状态确定后，才能确实如何处理。
             // 所以我们需要把我们的**两种情况**的处理逻辑做为callback放入promise1(此处即this/self)的回调数组里
             // 逻辑本身跟第一个if块内的几乎一致
-            var promise2 = new Promise(function(resolve, reject) {
+            promise2 = new Promise(function(resolve, reject) {
+                // 这里之所以没有异步执行，是因为这些函数必然会被resolve或reject调用，而resolve或reject函数里的内容已是异步执行，构造函数里的定义
                 self.onResolvedCallback.push(function(value) {
                     var x = onResolved(self.data)
                     if (x instanceof Promise) {
