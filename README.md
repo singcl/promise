@@ -54,6 +54,7 @@ Promise的初始状态为pending，它可以由此状态转换为fulfilled（res
 then方法的callbakc为什么要设计成异步调用？
 
 答：Promise 的机制就是 then 回调函数必须异步执行。为什么？因为这样保障了代码执行顺序的一致性。
+
 先看一个场景：
 ```js
 promise.then(function() { 
@@ -87,7 +88,5 @@ bar();
 - Swallow any errors/exceptions that may happen
 
 更多关于该问题的探讨可以阅读：https://www.zhihu.com/question/57071244
-## License
-
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsingcl%2Fpromise.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsingcl%2Fpromise?ref=badge_large)
