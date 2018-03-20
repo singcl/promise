@@ -59,11 +59,11 @@ function Promise(executor) {
     }
     // executor函数在执行过程中有可能出错
     // 我们来捕获这个错误
-    // try {
+    try {
         executor(resolve, reject)               // 执行executor并传入相应的参数
-    // } catch (error) {
-    //     reject(error)
-    // }
+    } catch (error) {
+        reject(error)
+    }
     /* =============================== Promise 构造函数 END ======================================== */
 
     /* =============================== Promise 原型方法: then ====================================== */
@@ -74,8 +74,35 @@ function Promise(executor) {
         var promise2
 
         // 根据标准，then方法的参数如果不是function,则我们需要忽略它
-        onResolved = typeof onResolved === 'function' ? onResolved : function(v) {}
-        onRejected = typeof onRejected === 'function' ? onRejected : function(r) {}
+        onResolved = typeof onResolved === 'function' ? onResolved : function() {}
+        onRejected = typeof onRejected === 'function' ? onRejected : function() {}
+
+        if (self.status === 'pending') {
+            // 如果当前的Promise还处于pending状态，我们并不能确定调用onResolved还是onRejected，
+            // 只能等到Promise的状态确定后，才能确实如何处理。
+            // 所以我们需要把我们的**两种情况**的处理逻辑做为callback放入promise1(此处即this/self)的回调数组里
+            // 逻辑本身跟第一个if块内的几乎一致
+            promise2 = new Promise(function(resolve, reject) {
+                // 这里之所以没有异步执行，是因为这些函数必然会被resolve或reject调用，而resolve或reject函数里的内容已是异步执行，构造函数里的定义
+                self.onResolvedCallback.push(function(value) {
+                    var x = onResolved(value)
+                    if (x instanceof Promise) {
+                        x.then(resolve, reject)
+                    }
+                    resolve(value)
+                })
+
+                self.onRejectedCallback.push(function(reason) {
+                    var x = onRejected(reason)
+                    if (x instanceof Promise) {
+                        x.then(resolve, reject)
+                    }
+                    reject(x)
+                })
+            })
+            // then方法执行结果返回一个新的promise: promise2
+            return promise2
+        }
 
         if (self.status === 'resolved') {
             // 如果promise1(此处即为this/self)的状态已经确定并且是resolved，我们调用onResolved
@@ -121,33 +148,6 @@ function Promise(executor) {
                         reject(error)
                     }
                 }, 0)
-            })
-            // then方法执行结果返回一个新的promise: promise2
-            return promise2
-        }
-
-        if (self.status === 'pending') {
-            // 如果当前的Promise还处于pending状态，我们并不能确定调用onResolved还是onRejected，
-            // 只能等到Promise的状态确定后，才能确实如何处理。
-            // 所以我们需要把我们的**两种情况**的处理逻辑做为callback放入promise1(此处即this/self)的回调数组里
-            // 逻辑本身跟第一个if块内的几乎一致
-            promise2 = new Promise(function(resolve, reject) {
-                // 这里之所以没有异步执行，是因为这些函数必然会被resolve或reject调用，而resolve或reject函数里的内容已是异步执行，构造函数里的定义
-                self.onResolvedCallback.push(function(value) {
-                    var x = onResolved(value)
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
-                    }
-                    resolve(value)
-                })
-
-                self.onRejectedCallback.push(function(reason) {
-                    var x = onRejected(reason)
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
-                    }
-                    reject(x)
-                })
             })
             // then方法执行结果返回一个新的promise: promise2
             return promise2
