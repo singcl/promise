@@ -32,6 +32,10 @@ function Promise(executor) {
             return value.then(resolve, reject)
         }
         // 异步执行所有回调函数
+        // 为什么这里要异步执行？暂时我的理解是：resolve和reject可能同步被调用，也可能异步被调用。
+        // 如果我们resolve被设计为同步，那么当它被同步调用时候在执行then方法之前状态就位resolved， 当它被异步调用时候在执行then方法之前它的状态还是pending
+        // 所以这样会有很多不确定性。为了统一，这里resolve和reject都被设计为异步，那么不同同步调用还是异步调用，都会异步更新promise，保证在执行then的时候统一为pending
+        // 第二，这样这设计可以保证在异步执行resolve和reject的时候保证then 的callback已经push到了相应的队列当中。
         setTimeout(function() {
             if(self.status === 'pending') {
                 self.status = 'resolved'
@@ -47,6 +51,10 @@ function Promise(executor) {
     // 作为executor回调函数的第二个参数使用
     function reject(reason) {
         // 异步执行所有回调函数
+        // 为什么这里要异步执行？暂时我的理解是：resolve和reject可能同步被调用，也可能异步被调用。
+        // 如果我们resolve被设计为同步，那么当它被同步调用时候在执行then方法之前状态就位resolved， 当它被异步调用时候在执行then方法之前它的状态还是pending
+        // 所以这样会有很多不确定性。为了统一，这里resolve和reject都被设计为异步，那么不同同步调用还是异步调用，都会异步更新promise，保证在执行then的时候统一为pending
+        // 第二，这样这设计可以保证在异步执行resolve和reject的时候保证then 的callback已经push到了相应的队列当中。
         setTimeout(function() {
             if (self.status === 'pending') {
                 self.status = 'rejected'
@@ -89,7 +97,7 @@ function Promise(executor) {
                     if (x instanceof Promise) {
                         x.then(resolve, reject)
                     }
-                    resolve(value)
+                    resolve(x)
                 })
 
                 self.onRejectedCallback.push(function(reason) {
