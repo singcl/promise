@@ -96,20 +96,31 @@ function Promise(executor) {
             promise2 = new Promise(function(resolve, reject) {
                 // 这里之所以没有异步执行，是因为这些函数必然会被resolve或reject调用，而resolve或reject函数里的内容已是异步执行，构造函数里的定义
                 self.onResolvedCallback.push(function(value) {
-                    var x = onResolved(value)
-                    if (x instanceof Promise) {
-                        // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
-                        x.then(resolve, reject)
+                    try {
+                        var x = onResolved(value)
+                        if (x instanceof Promise) {
+                            // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
+                            x.then(resolve, reject)
+                            return
+                        }
+                        resolve(x)
+                    } catch (error) {
+                        reject(error)
                     }
-                    resolve(x)
+                   
                 })
 
                 self.onRejectedCallback.push(function(reason) {
-                    var x = onRejected(reason)
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
+                    try {
+                        var x = onRejected(reason)
+                        if (x instanceof Promise) {
+                            x.then(resolve, reject)
+                            return
+                        }
+                        reject(x)
+                    } catch (error) {
+                        reject(error)
                     }
-                    reject(x)
                 })
             })
             // then方法执行结果返回一个新的promise: promise2
@@ -127,6 +138,7 @@ function Promise(executor) {
                         // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
                         if (x instanceof Promise) {
                             x.then(resolve, reject)
+                            return
                         }
                         // 否则，以它的返回值做为promise2的结果
                         resolve(x)
@@ -152,6 +164,7 @@ function Promise(executor) {
                         // 如果onRejected的返回值是一个Promise对象，直接取它的结果做为promise2的结果
                         if (x instanceof Promise) {
                             x.then(resolve, reject)
+                            return
                         }
                         // 否则，以它的返回值做为promise2的结果
                         reject(x)
