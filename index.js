@@ -86,6 +86,30 @@ x为`promise2 = promise1.then(onResolved, onRejected)`里`onResolved/onRejected`
 `resolve`和`reject`实际上是`promise2`的`executor`的两个实参，因为很难挂在其它的地方，所以一并传进来。
 相信各位一定可以对照标准把标准转换成代码，这里就只标出代码在标准中对应的位置，只在必要的地方做一些解释
 */
+function resolvePromise(promise2, x, resolve, reject) {
+    var then
+    var thenCalledOrThrow
+
+    if (promise2 === x) {
+        reject(new TypeError('Chaining cycle detected for promise!'))
+        return
+    }
+
+    if (x instanceof Promise) {
+        //because x could resolved by a Promise Object
+        if (x.status === 'pending') {
+            x.then(function(v) {
+                resolvePromise(promise2, v, resolve, reject)
+            }, reject)
+        } else {
+            //but if it is resolved, it will never resolved by a Promise Object but a static value;
+            x.then(resolve, reject)
+        }
+        return
+    }
+
+    // TODO
+}
 
 /*=================================resolvePromise END=========================================*/
 
