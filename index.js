@@ -28,6 +28,9 @@ function Promise(executor) {
     // Promise构造函数内部定义的私有函数
     // 作为executor回调函数的第一个参数使用
     function resolve(value) {
+        // resolve一个promise的时候具体流程还没有搞清楚 =》OK
+        // 如果value是一个Promise对象，直接取它的结果做为promise的结果
+        // resolve作为callback在then内部异步执行，当resolve执行时，传入resolve的参数时候value的data,而resolve是以参数参数传进去的，它的执行改变的是外部调用resolve的环境即将生成的promise的状态
         if (value instanceof Promise) {
             return value.then(resolve, reject)
         }
@@ -95,6 +98,7 @@ function Promise(executor) {
                 self.onResolvedCallback.push(function(value) {
                     var x = onResolved(value)
                     if (x instanceof Promise) {
+                        // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
                         x.then(resolve, reject)
                     }
                     resolve(x)
