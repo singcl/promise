@@ -147,7 +147,7 @@ Promise.prototype.then = function(onResolved, onRejected) {
 
     // 根据标准，then方法的参数如果不是function,则我们需要忽略它
     onResolved = typeof onResolved === 'function' ? onResolved : function(v) {return v}
-    onRejected = typeof onRejected === 'function' ? onRejected : function(r) { return r}
+    onRejected = typeof onRejected === 'function' ? onRejected : function(r) { throw r}
 
     if (self.status === 'pending') {
         // 如果当前的Promise还处于pending状态，我们并不能确定调用onResolved还是onRejected，
