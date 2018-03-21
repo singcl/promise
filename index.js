@@ -220,5 +220,11 @@ Promise.prototype.then = function(onResolved, onRejected) {
 }
 /* ============================ Promise 原型方法then END ===================================== */
 
+/* ============================ Promise 原型方法catch ===================================== */
+Promise.prototype.catch = function(onRejected) {
+    return this.then(null, onRejected)
+}
+/* ============================ Promise 原型方法catch END ===================================== */
+
 // exports
 module.exports = Promise
