@@ -108,7 +108,32 @@ function resolvePromise(promise2, x, resolve, reject) {
         return
     }
 
-    // TODO
+    if ((x !== null) && ((typeof x === 'object') || (typeof x === 'function'))) {
+        try {
+            // because x.then could be a getter
+            then = x.then
+            if (typeof then === 'function') {
+                then.call(x, function rs(y) {
+                    if (thenCalledOrThrow) return
+                    thenCalledOrThrow = true
+                    return resolvePromise(promise2, y, resolve, reject)
+                }, function rj(r) {
+                    if (thenCalledOrThrow) return
+                    thenCalledOrThrow = true
+                    return reject(r)
+                })
+            } else {
+                resolve(x)
+            }
+        } catch (error) {
+            if (thenCalledOrThrow) return
+            thenCalledOrThrow = true
+            return reject(error)
+        }
+    } else {
+        resolve(x)
+    }
+
 }
 
 /*=================================resolvePromise END=========================================*/
@@ -134,12 +159,7 @@ Promise.prototype.then = function(onResolved, onRejected) {
             self.onResolvedCallback.push(function(value) {
                 try {
                     var x = onResolved(value)
-                    if (x instanceof Promise) {
-                        // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
-                        x.then(resolve, reject)
-                        return
-                    }
-                    resolve(x)
+                    resolvePromise(promise2, x, resolve, reject)
                 } catch (error) {
                     reject(error)
                 }
@@ -149,11 +169,7 @@ Promise.prototype.then = function(onResolved, onRejected) {
             self.onRejectedCallback.push(function(reason) {
                 try {
                     var x = onRejected(reason)
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
-                        return
-                    }
-                    reject(x)
+                    resolvePromise(promise2, x, resolve, reject)
                 } catch (error) {
                     reject(error)
                 }
@@ -171,13 +187,7 @@ Promise.prototype.then = function(onResolved, onRejected) {
                 // 因为考虑到有可能throw，所以我们将其包在try/catch块里
                 try {
                     var x = onResolved(self.data)
-                    // 如果onResolved的返回值是一个Promise对象，直接取它的结果做为promise2的结果
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
-                        return
-                    }
-                    // 否则，以它的返回值做为promise2的结果
-                    resolve(x)
+                    resolvePromise(promise2, x, resolve, reject)
                 } catch (error) {
                     // 如果出错，以捕获到的错误做为promise2的结果
                     reject(error)
@@ -197,13 +207,7 @@ Promise.prototype.then = function(onResolved, onRejected) {
                 // 因为考虑到有可能throw，所以我们将其包在try/catch块里
                 try {
                     var x = onRejected(self.data)
-                    // 如果onRejected的返回值是一个Promise对象，直接取它的结果做为promise2的结果
-                    if (x instanceof Promise) {
-                        x.then(resolve, reject)
-                        return
-                    }
-                    // 否则，以它的返回值做为promise2的结果
-                    reject(x)
+                    resolvePromise(promise2, x, resolve, reject)
                 } catch (error) {
                     // 如果出错，以捕获到的错误做为promise2的结果
                     reject(error)
