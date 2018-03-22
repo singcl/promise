@@ -1,11 +1,12 @@
 {
   "name": "@singcl/promise",
   "version": "0.1.1",
-  "description": "A promise",
-  "main": "index.js",
+  "description": "A promise Promise/A+",
+  "main": "dist/index.js",
   "scripts": {
     "test": "promises-aplus-tests ./test/promise.spec.js",
-    "lint": "eslint --fix index.js"
+    "lint": "eslint --fix src/index.js",
+    "build": "gulp && cross-env NODE_ENV=production npm test"
   },
   "repository": {
     "type": "git",
@@ -21,9 +22,12 @@
   },
   "homepage": "https://github.com/singcl/promise#readme",
   "devDependencies": {
+    "cross-env": "^5.1.4",
     "eslint": "^4.18.2",
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.9.0",
+    "gulp": "^3.9.1",
+    "gulp-uglify": "^3.0.0",
     "promises-aplus-tests": "^2.1.2"
   }
 }
