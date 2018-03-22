@@ -4,7 +4,7 @@
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-10de6e.svg?style=flat-square)](https://github.com/prettier/prettier)
 ![David](https://img.shields.io/david/dev/singcl/promise.svg?style=flat-square)
 ![David](https://img.shields.io/david/singcl/promise.svg?style=flat-square)
-![Github file size](https://img.shields.io/github/size/singcl/promise/index.js.svg?style=flat-square)
+![Github file size](https://img.shields.io/github/size/singcl/promise/dist/index.js.svg?style=flat-square)
 ![npm](https://img.shields.io/npm/dm/promise.svg?style=flat-square)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fsingcl%2Fpromise.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fsingcl%2Fpromise?ref=badge_shield)
 
