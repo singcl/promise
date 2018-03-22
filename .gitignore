@@ -46,10 +46,8 @@ node_modules/
 #############
 .idea/
 
-# Dist files #
+# Dist files not Ignore #
 ##############
-dist/
-_dist/
 
 # Compiled files #
 ##################
