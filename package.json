@@ -1,6 +1,6 @@
 {
   "name": "@singcl/promise",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "A promise Promise/A+",
   "main": "dist/index.js",
   "scripts": {
