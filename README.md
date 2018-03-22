@@ -1,5 +1,5 @@
 ![promise](./img/promise.png)
-## 深入理解Promise内部结构，逐步实现一个完整的Promise类
+## Promise/A+
 [![npm (scoped)](https://img.shields.io/npm/v/@singcl/promise.svg?style=flat-square)](https://www.npmjs.com/package/@singcl/promise)
 [![code style: prettier](https://img.shields.io/badge/code_style-prettier-10de6e.svg?style=flat-square)](https://github.com/prettier/prettier)
 ![David](https://img.shields.io/david/dev/singcl/promise.svg?style=flat-square)
@@ -48,7 +48,8 @@ Promise的初始状态为pending，它可以由此状态转换为fulfilled（res
 ### **Promise实现**
 
 - [x] Promise构造函数基本结构
-- [x] Promise原型方法then
+- [x] Promise原型方法:then
+- [x] Promise原型方法:catch
 
 ### 问题探讨
 then方法的callbakc为什么要设计成异步调用？
