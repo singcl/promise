@@ -10,3 +10,6 @@
     - Promise基本结构完成，通过所有测试符合Promise/A+
     - 增加gulp自动化构建流程
     - 输出目录更改为dist
+#### 2018.3.23更新日志
+- **version: v0.1.4**
+    - Add Travis CI
