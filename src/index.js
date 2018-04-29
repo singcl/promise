@@ -96,11 +96,12 @@ function resolvePromise(promise2, x, resolve, reject) {
     }
 
     if (x instanceof Promise) {
-        //because x could resolved by a Promise Object
+        //because x could be resolved by a Promise Object
         if (x.status === 'pending') {
             x.then(function(v) {
                 resolvePromise(promise2, v, resolve, reject)
             }, reject)
+            // 上一行的reject 写成function(r) {reject(r)} 也是一样的
         } else {
             //but if it is resolved, it will never resolved by a Promise Object but a static value;
             x.then(resolve, reject)
@@ -108,7 +109,7 @@ function resolvePromise(promise2, x, resolve, reject) {
         return
     }
 
-    if ((x !== null) && ((typeof x === 'object') || (typeof x === 'function'))) {
+    if (((typeof x === 'object') || (typeof x === 'function')) && (x !== null)) {
         try {
             // because x.then could be a getter
             then = x.then
@@ -116,10 +117,16 @@ function resolvePromise(promise2, x, resolve, reject) {
                 then.call(x, function rs(y) {
                     if (thenCalledOrThrow) return
                     thenCalledOrThrow = true
-                    return resolvePromise(promise2, y, resolve, reject)
+                    // 这里没必要return， 因为我们没有用到这个返回值
+                    // 我们这里主要的目的是调用resovle 方法来更新promise2的状态
+                    // return resolvePromise(promise2, y, resolve, reject)
+                    resolvePromise(promise2, y, resolve, reject)
                 }, function rj(r) {
                     if (thenCalledOrThrow) return
                     thenCalledOrThrow = true
+                    // 这里没必要return， 因为我们没有用到这个返回值
+                    // 我们这里主要的目的是调用reject 方法来更新promise2的状态
+                    // return reject(r)
                     return reject(r)
                 })
             } else {
