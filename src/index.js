@@ -133,7 +133,6 @@ function resolvePromise(promise2, x, resolve, reject) {
     } else {
         resolve(x)
     }
-
 }
 
 /*=================================resolvePromise END=========================================*/
@@ -163,7 +162,6 @@ Promise.prototype.then = function(onResolved, onRejected) {
                 } catch (error) {
                     reject(error)
                 }
-                
             })
 
             self.onRejectedCallback.push(function(reason) {
