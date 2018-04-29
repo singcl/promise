@@ -146,12 +146,12 @@ Promise.prototype.then = function(onResolved, onRejected) {
     var promise2
 
     // 根据标准，then方法的参数如果不是function,则我们需要忽略它
-    onResolved = typeof onResolved === 'function' ? onResolved : function(v) {return v}
-    onRejected = typeof onRejected === 'function' ? onRejected : function(r) { throw r}
+    onResolved = typeof onResolved === 'function' ? onResolved : function(v) { return v }
+    onRejected = typeof onRejected === 'function' ? onRejected : function(r) { throw r }
 
     if (self.status === 'pending') {
         // 如果当前的Promise还处于pending状态，我们并不能确定调用onResolved还是onRejected，
-        // 只能等到Promise的状态确定后，才能确实如何处理。
+        // 只能等到Promise的状态确定后，才能 确实如何处理。
         // 所以我们需要把我们的**两种情况**的处理逻辑做为callback放入promise1(此处即this/self)的回调数组里
         // 逻辑本身跟第一个if块内的几乎一致
         promise2 = new Promise(function(resolve, reject) {
