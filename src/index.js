@@ -12,8 +12,8 @@
  * @see https://github.com/xieranmaya/blog/issues/3
  * 
  * @author singcl(24661881@qq.com)
- * @date    2018-03-14 01:03:15
- * @version 0.1.4
+ * @date    2018-05-16 01:03:15
+ * @version 0.2.0
  */
 
 /* =================================== Promise 构造函数 ============================================ */
@@ -237,11 +237,36 @@ Promise.prototype.then = function(onResolved, onRejected) {
 }
 /* ============================ Promise 原型方法then END ===================================== */
 
-/* ============================ Promise 原型方法catch ===================================== */
+
+/**
+ *  Promise 原型方法catch
+ * @param {Function} onRejected Promise 状态reject 时的处理函数
+ */
 Promise.prototype.catch = function(onRejected) {
     return this.then(null, onRejected)
 }
-/* ============================ Promise 原型方法catch END ===================================== */
+
+/**
+ * Promise 静态方法 resolve
+ * @param {*} value 任意值
+ */
+Promise.resolve = function resolve(value) {
+    var promise = new Promise(function(resolve, reject) {
+        resolvePromise(promise, value, resolve, reject);
+    });
+
+    return promise;
+}
+
+/**
+ * Promise 静态方法 reject
+ * @param {*} value 任意值
+ */
+Promise.reject = function(reason) {
+    return new Promise(function(resolve, reject) {
+        reject(reason)
+    });
+}
 
 // exports
 module.exports = Promise
