@@ -9,6 +9,8 @@
  *   // 如果操作失败，调用 reject并传入 reason
  *      reject(reason)
  * }
+ * @see https://github.com/xieranmaya/blog/issues/3
+ * 
  * @author singcl(24661881@qq.com)
  * @date    2018-03-14 01:03:15
  * @version 0.1.4
@@ -152,7 +154,12 @@ Promise.prototype.then = function(onResolved, onRejected) {
     var promise2
 
     // 根据标准，then方法的参数如果不是function,则我们需要忽略它
+    // 这里也就实现了值的穿透
+
+    // resolve 值的穿透： 其实就是 onResolved 不为函数时候将值交给后一个promise 来处理。 如此递归
     onResolved = typeof onResolved === 'function' ? onResolved : function(v) { return v }
+    // reject 值的穿透： 其实就是 onRejected 不为函数时候将值交给后一个promise 来处理。 如此递归
+    // 这就是 为什么我们能在promise 链的最后添加一个catch 方法来捕获 所有中间过程出现的错误。
     onRejected = typeof onRejected === 'function' ? onRejected : function(r) { throw r }
 
     if (self.status === 'pending') {
@@ -163,6 +170,7 @@ Promise.prototype.then = function(onResolved, onRejected) {
         promise2 = new Promise(function(resolve, reject) {
             // 这里之所以没有异步执行，是因为这些函数必然会被resolve或reject调用，而resolve或reject函数里的内容已是异步执行，构造函数里的定义
             self.onResolvedCallback.push(function(value) {
+                // 这里的try/catch 非常有必要
                 try {
                     var x = onResolved(value)
                     resolvePromise(promise2, x, resolve, reject)
@@ -172,6 +180,8 @@ Promise.prototype.then = function(onResolved, onRejected) {
             })
 
             self.onRejectedCallback.push(function(reason) {
+                // 这里的try/catch 非常有必要
+                // 因为考虑到onRejected 有可能throw（比如reject值的穿透，在 promise 链的最后添加一个catch方法捕获所有错误场景）所以我们将其包在try/catch块里
                 try {
                     var x = onRejected(reason)
                     resolvePromise(promise2, x, resolve, reject)
@@ -189,7 +199,8 @@ Promise.prototype.then = function(onResolved, onRejected) {
         promise2 = new Promise(function(resolve, reject) {
             // 异步执行onResolved
             setTimeout(function() {
-                // 因为考虑到有可能throw，所以我们将其包在try/catch块里
+                // 这里的try/catch 非常有必要
+                // 因为考虑到 onResolved 中有可能throw，所以我们将其包在try/catch块里
                 try {
                     var x = onResolved(self.data)
                     resolvePromise(promise2, x, resolve, reject)
@@ -209,7 +220,8 @@ Promise.prototype.then = function(onResolved, onRejected) {
         promise2 = new Promise(function(resolve, reject) {
             // 异步执行onRejected
             setTimeout(function() {
-                // 因为考虑到有可能throw，所以我们将其包在try/catch块里
+                // 这里的try/catch 非常有必要
+                // 因为考虑到onRejected 有可能throw（比如reject值的穿透，在 promise 链的最后添加一个catch方法捕获所有错误场景）所以我们将其包在try/catch块里
                 try {
                     var x = onRejected(self.data)
                     resolvePromise(promise2, x, resolve, reject)
