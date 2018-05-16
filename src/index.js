@@ -248,6 +248,9 @@ Promise.prototype.catch = function(onRejected) {
 
 /**
  * Promise 静态方法 resolve
+ * Promise.resolve应该立即返回一个状态为resolve 的 promise 而这里立即返回的是一个pendding状态的promise
+ * 所有这样实现是有问题的！！
+ * @see https://github.com/then/promise 可以参照promise库的实现
  * @param {*} value 任意值
  */
 Promise.resolve = function resolve(value) {
@@ -260,6 +263,9 @@ Promise.resolve = function resolve(value) {
 
 /**
  * Promise 静态方法 reject
+ * Promise.reject应该立即返回一个状态为reject 的 promise 而这里立即返回的是一个pendding状态的promise
+ * 所有这样实现是有问题的！！
+ * @see https://github.com/then/promise 可以参照promise库的实现
  * @param {*} value 任意值
  */
 Promise.reject = function(reason) {
